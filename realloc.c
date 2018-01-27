@@ -5,7 +5,7 @@
 ** Created by rectoria
 */
 
-#include "realloc.h"
+#include "malloc.h"
 
 void	*realloc(void *ptr, size_t size) {
 

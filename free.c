@@ -5,7 +5,7 @@
 ** Created by rectoria
 */
 
-#include "free.h"
+#include "malloc.h"
 
 void	*free(void *ptr) {
 
