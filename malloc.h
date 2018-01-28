@@ -9,24 +9,24 @@
 #define MALLOC_H
 
 #include <errno.h>
-#include <zconf.h>
+#include <unistd.h>
 
-#define HEADER sizeof(struct s_memory_chunk)
-
-extern struct metadata_t *allocated;
-extern struct metadata_t *freed;
+extern struct metadata_s *allocated;
+extern struct metadata_s *freed;
 extern size_t heap_size;
 
-typedef struct metadata_t {
+typedef struct metadata_s {
 	void *ptr;
 	size_t size;
-	struct metadata_t *prev;
-	struct metadata_t *next;
-} metadata_s;
+	struct metadata_s *prev;
+	struct metadata_s *next;
+} metadata_t;
 
 void	*malloc(size_t);
 void	*realloc(void *, size_t);
 void	free(void *);
 void	show_alloc_mem(void);
+
+#define HEADER sizeof(struct metadata_s)
 
 #endif

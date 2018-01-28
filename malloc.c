@@ -22,8 +22,8 @@ static void *init_heap(size_t i)
 
 static void *resize_heap(size_t i)
 {
-	metadata_s *temp;
-	metadata_s *iter;
+	metadata_t *temp;
+	metadata_t *iter;
 
 	if ((temp = sbrk(i + HEADER)) == (void *)-1)
 		return (NULL);
@@ -38,9 +38,9 @@ static void *resize_heap(size_t i)
 	return (temp->ptr);
 }
 
-static void *realloc_freed(metadata_s *pMetadata)
+static void *realloc_freed(metadata_t *pMetadata)
 {
-	metadata_s *temp = allocated;
+	metadata_t *temp = allocated;
 
 	pMetadata->next->prev = pMetadata->prev;
 	pMetadata->prev->next = pMetadata->next;
@@ -64,7 +64,7 @@ static void *realloc_freed(metadata_s *pMetadata)
 
 void *malloc(size_t size)
 {
-	metadata_s *temp = freed;
+	metadata_t *temp = freed;
 
 	if (!allocated)
 		return (init_heap(size));

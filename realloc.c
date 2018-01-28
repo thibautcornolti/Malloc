@@ -10,8 +10,8 @@
 
 void *realloc(void *ptr, size_t size)
 {
-	metadata_s *temp = allocated;
-	metadata_s *newElem;
+	metadata_t *temp = allocated;
+	metadata_t *newElem;
 
 	if (!ptr && size)
 		return (malloc(size));
