@@ -7,6 +7,25 @@
 
 #include "malloc.h"
 
+static void resize_down_heap();
+
+static void resize_heap(metadata_t *pMetadata)
+{
+	metadata_t *temp = freed;
+
+	if (pMetadata)
+		release_ptr(pMetadata);
+	while (temp->next)
+		temp = temp->next;
+	if (temp + HEADER + temp->size != sbrk(0))
+		return;
+	while (temp->prev && temp->prev->ptr + temp->prev->size + 1 == temp)
+		temp = temp->prev;
+	if (temp->prev)
+		temp->prev->next = NULL;
+	brk(temp);
+}
+
 static void merge()
 {
 	metadata_t *temp = freed;
@@ -21,6 +40,7 @@ static void merge()
 		}
 		temp = temp->next;
 	}
+	resize_heap(NULL);
 }
 
 static void release_ptr(metadata_t *pMetadata)
@@ -41,21 +61,6 @@ static void release_ptr(metadata_t *pMetadata)
 		temp->next = pMetadata;
 	}
 	merge();
-}
-
-static void resize_heap(metadata_t *pMetadata)
-{
-	metadata_t *temp = freed;
-
-	release_ptr(pMetadata);
-	while (temp->next)
-		temp = temp->next;
-	while (temp->prev && temp->prev->ptr + temp->prev->size + 1 == temp)
-		temp = temp->prev;
-	if (temp->prev)
-		temp->prev->next = NULL;
-	brk(temp);
-	heap_size -= (allocated + heap_size) - temp;
 }
 
 void free(void *ptr)

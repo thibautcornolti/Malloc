@@ -8,6 +8,12 @@
 #include <string.h>
 #include "malloc.h"
 
+metadata_t *allocated = NULL;
+
+metadata_t *freed = NULL;
+
+size_t heap_size = 0;
+
 static void *init_heap(size_t i)
 {
 	if ((allocated = sbrk(i + HEADER)) == (void *)-1)
@@ -59,6 +65,7 @@ static void *realloc_freed(metadata_t *pMetadata)
 		pMetadata->prev = NULL;
 		allocated = pMetadata;
 	}
+	show_alloc_mem();
 	return (pMetadata + HEADER);
 }
 
