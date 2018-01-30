@@ -13,7 +13,6 @@
 
 extern struct metadata_s *allocated;
 extern struct metadata_s *freed;
-extern size_t heap_size;
 
 typedef struct metadata_s {
 	void *ptr;

@@ -7,7 +7,7 @@
 
 #include "malloc.h"
 
-static void resize_down_heap();
+static void release_ptr(metadata_t *);
 
 static void resize_heap(metadata_t *pMetadata)
 {

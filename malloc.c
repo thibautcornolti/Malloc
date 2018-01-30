@@ -22,7 +22,6 @@ static void *init_heap(size_t i)
 	allocated->ptr = allocated + HEADER;
 	allocated->prev = NULL;
 	allocated->next = NULL;
-	heap_size += i + HEADER;
 	return (allocated->ptr);
 }
 

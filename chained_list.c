@@ -55,30 +55,3 @@ void del_elem(metadata_t **first_node, metadata_t *elem)
 	if (temp == *first_node)
 		*first_node = temp->next;
 }
-
-void show_list(metadata_t **first_node)
-{
-	metadata_t *temp = *first_node;
-
-	while (temp) {
-		printf("%x -> %x -> %x\n", temp->prev, temp, temp->next);
-		temp = temp->next;
-	}
-}
-
-int main() {
-	metadata_t *first = NULL;
-	metadata_t elem;
-	metadata_t elem2;
-	metadata_t elem3;
-	metadata_t elem4;
-	metadata_t elem5;
-	metadata_t elem6;
-	
-	add_elem(&first, &elem);
-	add_elem(&first, &elem2);
-	add_elem(&first, &elem3);
-	add_elem(&first, &elem4);
-	add_elem(&first, &elem5);
-	show_list(&first);
-}
