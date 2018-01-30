@@ -12,7 +12,7 @@ SRCS	= ./free.c \
 OBJS	= $(SRCS:.c=.o)
 
 CFLAGS = -I ./
-CFLAGS += -W -Wall -Wextra -g
+CFLAGS += -W -Wall -Wextra -g -fPIC
 
 all: $(NAME)
 

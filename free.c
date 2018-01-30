@@ -7,79 +7,46 @@
 
 #include "malloc.h"
 
-static void release_ptr(metadata_t *);
-
-static void resize_heap(metadata_t *pMetadata)
+static void resize_heap()
 {
-	metadata_t *temp = freed;
+	metadata_t *temp = allocated;
 
-	if (pMetadata)
-		release_ptr(pMetadata);
-	while (temp->next)
+	while (temp->next && temp->next->next)
 		temp = temp->next;
-	if (temp + HEADER + temp->size != sbrk(0))
-		return;
-	while (temp->prev && temp->prev->ptr + temp->prev->size + 1 == temp)
-		temp = temp->prev;
-	if (temp->prev)
-		temp->prev->next = NULL;
-	brk(temp);
+	if (temp->next->occupied == 0) {
+		brk(temp->next->ptr);
+		temp->next = NULL;
+	}
 }
 
 static void merge()
 {
-	metadata_t *temp = freed;
+	metadata_t *temp = allocated;
 
 	while (temp) {
-		if (temp->ptr + temp->size + 1 == temp->next) {
+		if (temp->next && temp->next->next && !temp->next->occupied &&
+			!temp->next->next->occupied) {
 			temp->size += HEADER + temp->next->size;
 			temp->next = temp->next->next;
-			if (temp->next->next)
-				temp->next->next->prev = temp;
-			continue;
+			continue ;
 		}
 		temp = temp->next;
 	}
-	resize_heap(NULL);
-}
-
-static void release_ptr(metadata_t *pMetadata)
-{
-	metadata_t *temp = freed;
-
-	if (!freed) {
-		freed = pMetadata;
-	} else if (freed > pMetadata) {
-		pMetadata->next = freed;
-		freed->prev = pMetadata;
-		freed = pMetadata;
-	} else {
-		while (freed && temp->next && temp->next < pMetadata)
-			temp = temp->next;
-		pMetadata->prev = temp;
-		pMetadata->next = NULL;
-		temp->next = pMetadata;
-	}
-	merge();
+	resize_heap();
 }
 
 void free(void *ptr)
 {
 	metadata_t *temp = allocated;
 
+	write(2, "free\n", 5);
 	while (ptr && temp && temp->ptr != ptr)
 		temp = temp->next;
-	if (!temp || !ptr)
-		return;
-	if (sbrk(0) == ptr + ((metadata_t *)ptr)->size)
-		resize_heap(temp);
-	else {
-		if (temp->prev)
-			temp->prev->next = temp->next;
-		if (temp->next)
-			temp->next->prev = temp->prev;
-		temp->next = NULL;
-		temp->prev = NULL;
-		release_ptr(temp);
+	if (!temp || !ptr) {
+		write(2, "endfree\n", 8);
+		return ;
 	}
+	temp->occupied = 0;
+	merge();
+	write(2, "endfree\n", 8);
 }

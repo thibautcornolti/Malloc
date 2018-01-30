@@ -12,20 +12,21 @@
 #include <unistd.h>
 
 extern struct metadata_s *allocated;
-extern struct metadata_s *freed;
 
 typedef struct metadata_s {
 	void *ptr;
 	size_t size;
-	struct metadata_s *prev;
 	struct metadata_s *next;
+	char occupied;
 } metadata_t;
 
 void	*malloc(size_t);
 void	*realloc(void *, size_t);
+void	*calloc(size_t, size_t);
 void	free(void *);
 void	show_alloc_mem(void);
 
+#define align4(x) (((((x)-1)>>2)<<2)+4)
 #define HEADER sizeof(struct metadata_s)
 
 #endif
