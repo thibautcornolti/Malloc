@@ -71,7 +71,7 @@ void free(void *ptr)
 		temp = temp->next;
 	if (!temp || !ptr)
 		return;
-	if (allocated + heap_size == ptr + ((metadata_t *)ptr)->size)
+	if (sbrk(0) == ptr + ((metadata_t *)ptr)->size)
 		resize_heap(temp);
 	else {
 		if (temp->prev)
