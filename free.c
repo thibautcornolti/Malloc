@@ -13,7 +13,7 @@ static void resize_heap()
 
 	while (temp->next && temp->next->next)
 		temp = temp->next;
-	if (temp->next->occupied == 0) {
+	if (temp->next && temp->next->occupied == 0) {
 		brk(temp->next->ptr);
 		temp->next = NULL;
 	}
