@@ -24,8 +24,6 @@ void my_putnbr(long long int nbr)
 
 int print_address_in_hexa(unsigned long long int ptr)
 {
-	//my_putnbr(ptr);
-	//return 1;
 	unsigned long nbr2;
 	char nbrc;
 	int size = 0;

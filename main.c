@@ -4,9 +4,18 @@
 int main()
 {
 	char *str;
-	int i = 0;
-	while(++i){
-		if(!(str = malloc(sizeof(char) * i * 100000)))
-		write(1, "Fail\n", 5);
+	if (str=malloc(200000000)) {
+		for (int i = 0 ; i < 200000000 ; ++i)
+			str[i] = 'o';
+		write(2, "should work\n", 13);
+		free(str);
 	}
+	if (str=malloc(200000000)) {
+		for (int i = 0 ; i < 200000000 ; ++i)
+			str[i] = 'o';
+		write(2, "should work\n", 13);
+		free(str);
+	}
+
+	sleep(15);
 }

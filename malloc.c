@@ -15,7 +15,6 @@ static void *init_heap(size_t i)
 {
 	allocated = sbrk(0);
 	if (brk(allocated + HEADER + i) == -1) {
-		write(2, "mallocnull0\n", 13);
 		return (NULL);
 	}
 	allocated->size = i;
@@ -32,7 +31,6 @@ static void *resize_heap(size_t i)
 
 	for (;temp->next; temp = temp->next);
 	if (brk(newElem + HEADER + i) == -1) {
-		write(2, "mallocnull1\n", 13);
 		return (NULL);
 	}
 	newElem->next = NULL;
@@ -53,18 +51,11 @@ void *malloc(size_t size)
 {
 	metadata_t *temp = allocated;
 
-	write(2, "malloc\n", 8);
-	size = align4(size);
-	if (!allocated) {
-		write(2, "endmalloc\n", 11);
+	size = ALIGN(size);
+	if (!allocated)
 		return (init_heap(size));
-	}
-	for (; temp; temp = temp->next) {
-		if (!temp->occupied && temp->size >= size) {
-			write(2, "endmalloc\n", 11);
+	for (; temp; temp = temp->next)
+		if (!temp->occupied && temp->size >= size)
 			return (realloc_freed(temp));
-		}
-	}
-	write(2, "endmalloc\n", 11);
 	return (resize_heap(size));
 }
