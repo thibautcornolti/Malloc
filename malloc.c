@@ -21,6 +21,7 @@ static void *init_heap(size_t i)
 	allocated->ptr = allocated + HEADER;
 	allocated->next = NULL;
 	allocated->occupied = 1;
+	unlock_thread(0);
 	return (allocated->ptr);
 }
 
@@ -38,12 +39,14 @@ static void *resize_heap(size_t i)
 	newElem->ptr = newElem + HEADER;
 	newElem->occupied = 1;
 	temp->next = newElem;
+	unlock_thread(0);
 	return (newElem->ptr);
 }
 
 static void *realloc_freed(metadata_t *pMetadata)
 {
 	pMetadata->occupied = 1;
+	unlock_thread(0);
 	return (pMetadata->ptr);
 }
 
@@ -52,6 +55,7 @@ void *malloc(size_t size)
 	metadata_t *temp = allocated;
 
 	size = ALIGN(size);
+	lock_thread(0);
 	if (!allocated)
 		return (init_heap(size));
 	for (; temp; temp = temp->next)

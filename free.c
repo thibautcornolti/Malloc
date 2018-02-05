@@ -17,6 +17,7 @@ static void resize_heap()
 		brk(temp->next->ptr);
 		temp->next = NULL;
 	}
+	unlock_thread(0);
 }
 
 static void merge()
@@ -28,7 +29,7 @@ static void merge()
 			!temp->next->next->occupied) {
 			temp->size += HEADER + temp->next->size;
 			temp->next = temp->next->next;
-			continue ;
+			continue;
 		}
 		temp = temp->next;
 	}
@@ -39,10 +40,13 @@ void free(void *ptr)
 {
 	metadata_t *temp = allocated;
 
+	lock_thread(0);
 	while (ptr && temp && temp->ptr != ptr)
 		temp = temp->next;
-	if (!temp || !ptr)
-		return ;
+	if (!temp || !ptr) {
+		unlock_thread(0);
+		return;
+	}
 	temp->occupied = 0;
 	merge();
 }

@@ -23,20 +23,28 @@ void *realloc(void *ptr, size_t size)
 	metadata_t *temp = allocated;
 	metadata_t *newElem;
 
-	if (!ptr && size)
+	lock_thread(1);
+	if (!ptr && size){
+		unlock_thread(1);
 		return (malloc(size));
+	}
 	while (temp && temp->ptr != ptr)
 		temp = temp->next;
 	if (temp && !size) {
+		unlock_thread(1);
 		free(ptr);
 		return (NULL);
 	} else if (temp) {
-		if (temp->size > size)
+		if (temp->size > size){
+			unlock_thread(1);
 			return (temp->ptr);
+		}
 		newElem = malloc(size);
 		my_memcpy(newElem, ptr, temp->size);
 		free(temp);
+		unlock_thread(1);
 		return (newElem);
 	}
+	unlock_thread(1);
 	return (malloc(size));
 }

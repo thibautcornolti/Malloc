@@ -24,6 +24,8 @@ void	*malloc(size_t);
 void	*realloc(void *, size_t);
 void	*calloc(size_t, size_t);
 void	free(void *);
+void	lock_thread(int);
+void	unlock_thread(int);
 void	show_alloc_mem(void);
 
 #ifndef __X86_64__
@@ -32,7 +34,6 @@ void	show_alloc_mem(void);
 #define ALIGNMENT (8)
 #endif
 
-#define ALIGN4(x) (((((x)-1)>>2)<<2)+4)
 #define ALIGN(size) (((size) + (ALIGNMENT - 1)) &~ (ALIGNMENT - 1))
 #define HEADER (sizeof(struct metadata_s))
 
