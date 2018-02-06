@@ -20,19 +20,23 @@ void my_memcpy(void *dest, const void *src, size_t n)
 
 void *realloc(void *ptr, size_t size)
 {
-	metadata_t *temp = allocated;
+	metadata_t *temp = NULL;
 	metadata_t *newElem;
 
+	write(2, "realloc\n", 9);
 	lock_thread(1);
 	if (!ptr && size){
 		unlock_thread(1);
+		write(2, "endrealloc\n", 12);
 		return (malloc(size));
 	}
-	while (temp && temp->ptr != ptr)
-		temp = temp->next;
+	temp = ptr - HEADER;
+	if (!ptr || temp->ptr != ptr)
+		temp = NULL;
 	if (temp && !size) {
 		unlock_thread(1);
 		free(ptr);
+		write(2, "endrealloc\n", 12);
 		return (NULL);
 	} else if (temp) {
 		if (temp->size > size){
@@ -41,10 +45,12 @@ void *realloc(void *ptr, size_t size)
 		}
 		newElem = malloc(size);
 		my_memcpy(newElem, ptr, temp->size);
-		free(temp);
+		free(ptr);
 		unlock_thread(1);
+		write(2, "endrealloc\n", 12);
 		return (newElem);
 	}
 	unlock_thread(1);
+	write(2, "endrealloc\n", 12);
 	return (malloc(size));
 }

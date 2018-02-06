@@ -14,12 +14,14 @@ metadata_t *allocated = NULL;
 static void *init_heap(size_t i)
 {
 	allocated = sbrk(0);
-	if (brk(allocated + HEADER + i) == -1) {
+	if (brk((void *) allocated + HEADER + i) == -1) {
 		return (NULL);
 	}
 	allocated->size = i;
-	allocated->ptr = allocated + HEADER;
+	allocated->ptr = (void *) allocated + HEADER;
 	allocated->next = NULL;
+	allocated->prev = NULL;
+	allocated->last = allocated;
 	allocated->occupied = 1;
 	unlock_thread(0);
 	return (allocated->ptr);
@@ -27,18 +29,19 @@ static void *init_heap(size_t i)
 
 static void *resize_heap(size_t i)
 {
-	metadata_t *temp = allocated;
+	metadata_t *temp = allocated->last;
 	metadata_t *newElem = sbrk(0);
 
-	for (;temp->next; temp = temp->next);
-	if (brk(newElem + HEADER + i) == -1) {
+	if (brk((void *) newElem + HEADER + i) == -1) {
 		return (NULL);
 	}
-	newElem->next = NULL;
 	newElem->size = i;
-	newElem->ptr = newElem + HEADER;
+	newElem->ptr = (void *) newElem + HEADER;
+	newElem->next = NULL;
+	newElem->prev = temp;
 	newElem->occupied = 1;
 	temp->next = newElem;
+	allocated->last = newElem;
 	unlock_thread(0);
 	return (newElem->ptr);
 }
@@ -54,6 +57,7 @@ void *malloc(size_t size)
 {
 	metadata_t *temp = allocated;
 
+	write(2, "malloc\n", 8);
 	size = ALIGN(size);
 	lock_thread(0);
 	if (!allocated)

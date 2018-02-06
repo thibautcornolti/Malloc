@@ -17,6 +17,8 @@ typedef struct metadata_s {
 	void *ptr;
 	size_t size;
 	struct metadata_s *next;
+	struct metadata_s *prev;
+	struct metadata_s *last;
 	char occupied;
 } metadata_t;
 

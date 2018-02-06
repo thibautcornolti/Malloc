@@ -7,7 +7,8 @@ RM	= rm -f
 SRCS	= ./free.c \
 	  ./malloc.c \
 	  ./realloc.c \
-	  ./show_alloc_mem.c 
+	  ./pthread.c \
+	  ./show_alloc_mem.c \
 
 OBJS	= $(SRCS:.c=.o)
 

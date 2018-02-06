@@ -1,21 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
-{
-	char *str;
-	if (str=malloc(200000000)) {
-		for (int i = 0 ; i < 200000000 ; ++i)
-			str[i] = 'o';
-		write(2, "should work\n", 13);
-		free(str);
-	}
-	if (str=malloc(200000000)) {
-		for (int i = 0 ; i < 200000000 ; ++i)
-			str[i] = 'o';
-		write(2, "should work\n", 13);
-		free(str);
-	}
+#define TOTAL_ALLOCS 20000
+#define ALLOC_SIZE 1024*1024
 
-	sleep(15);
+int main() {
+  malloc(1);
+	
+  int i;
+  void *ptr = NULL;
+
+  for (i = 0; i < TOTAL_ALLOCS; i++) {
+    ptr = malloc(ALLOC_SIZE);
+    if (ptr == NULL) {
+      printf("Memory failed to allocate!\n");
+      return 1;
+    }
+    free(ptr);
+  }
+
+  printf("Memory was allocated and freed!\n");	
+  return 0;
 }
