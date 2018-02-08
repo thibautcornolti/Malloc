@@ -12,35 +12,26 @@ static void resize_heap()
 {
 	metadata_t *temp = allocated->last;
 
-	if (temp && temp->occupied == 0) {
-		brk(temp->ptr);
+	if (temp && !temp->occupied) {
 		if (temp->prev) {
 			temp->prev->next = NULL;
 			allocated->last = temp->prev;
-		} else {
+		} else
 			allocated = NULL;
-		}
+		brk(temp);
 	}
 	unlock_thread(0);
 }
 
-static void merge()
+static void merge(metadata_t *p)
 {
-	metadata_t *temp = allocated;
-	metadata_t *removed;
-
-	while (temp) {
-		if (temp->next && !temp->occupied && !temp->next->occupied) {
-			removed = temp->next;
-			if (removed->next)
-				removed->next->prev = removed->prev;
-			else
-				allocated->last = removed->prev;
-			removed->prev->next = removed->next;
-			removed->prev->size += HEADER + removed->size;
-			continue;
-		}
-		temp = temp->next;
+	for (; p->next && !p->next->occupied;) {
+		p->size += HEADER + p->next->size;
+		p->next = p->next->next;
+		if (p->next)
+			p->next->prev = p;
+		else
+			allocated->last = p;
 	}
 	resize_heap();
 }
@@ -49,17 +40,16 @@ void free(void *ptr)
 {
 	metadata_t *temp;
 
-	write(2, "free\n", 5);
 	lock_thread(0);
 	if (!ptr) {
 		unlock_thread(0);
-		return ;
+		return;
 	}
 	temp = ptr - HEADER;
 	if (temp->ptr != ptr) {
 		unlock_thread(0);
-		return ;
+		return;
 	}
 	temp->occupied = 0;
-	merge();
+	merge(temp);
 }

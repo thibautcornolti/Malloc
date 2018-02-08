@@ -57,7 +57,6 @@ void *malloc(size_t size)
 {
 	metadata_t *temp = allocated;
 
-	write(2, "malloc\n", 8);
 	size = ALIGN(size);
 	lock_thread(0);
 	if (!allocated)

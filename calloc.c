@@ -7,6 +7,22 @@
 
 #include "malloc.h"
 
-void *calloc(size_t nmeb, size_t size){
-	return(malloc(nmeb * size));
+static void my_memset(void *ptr, const char c, size_t size)
+{
+	char *cptr = ptr;
+
+	for (int i = 0; i < size; i++)
+		cptr[i] = c;
+}
+
+void *calloc(size_t nmeb, size_t size)
+{
+	void *temp = NULL;
+
+	lock_thread(1);
+	if (nmeb && size)
+		temp = malloc(nmeb * size);
+	my_memset(temp, 0, nmeb * size);
+	unlock_thread(1);
+	return (temp);
 }

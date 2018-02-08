@@ -23,11 +23,9 @@ void *realloc(void *ptr, size_t size)
 	metadata_t *temp = NULL;
 	metadata_t *newElem;
 
-	write(2, "realloc\n", 9);
 	lock_thread(1);
 	if (!ptr && size){
 		unlock_thread(1);
-		write(2, "endrealloc\n", 12);
 		return (malloc(size));
 	}
 	temp = ptr - HEADER;
@@ -36,7 +34,6 @@ void *realloc(void *ptr, size_t size)
 	if (temp && !size) {
 		unlock_thread(1);
 		free(ptr);
-		write(2, "endrealloc\n", 12);
 		return (NULL);
 	} else if (temp) {
 		if (temp->size > size){
@@ -47,10 +44,8 @@ void *realloc(void *ptr, size_t size)
 		my_memcpy(newElem, ptr, temp->size);
 		free(ptr);
 		unlock_thread(1);
-		write(2, "endrealloc\n", 12);
 		return (newElem);
 	}
 	unlock_thread(1);
-	write(2, "endrealloc\n", 12);
 	return (malloc(size));
 }
