@@ -9,7 +9,6 @@
 #include <signal.h>
 
 static pthread_mutex_t g_mutex_m = PTHREAD_MUTEX_INITIALIZER;
-
 static pthread_mutex_t g_mutex_r = PTHREAD_MUTEX_INITIALIZER;
 
 void lock_thread(int flag)

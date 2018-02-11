@@ -23,29 +23,22 @@ void *realloc(void *ptr, size_t size)
 	metadata_t *temp = NULL;
 	metadata_t *newElem;
 
-	lock_thread(1);
-	if (!ptr && size){
-		unlock_thread(1);
+	if (!ptr && size)
 		return (malloc(size));
-	}
-	temp = ptr - HEADER;
-	if (!ptr || temp->ptr != ptr)
-		temp = NULL;
+	temp = (!ptr || ((metadata_t *)(ptr - HEADER))->ptr != ptr) ? NULL :
+		ptr - HEADER;
 	if (temp && !size) {
-		unlock_thread(1);
 		free(ptr);
 		return (NULL);
 	} else if (temp) {
-		if (temp->size > size){
-			unlock_thread(1);
+		if (temp->size > size)
 			return (temp->ptr);
-		}
+		lock_thread(1);
 		newElem = malloc(size);
 		my_memcpy(newElem, ptr, temp->size);
 		free(ptr);
 		unlock_thread(1);
 		return (newElem);
 	}
-	unlock_thread(1);
 	return (malloc(size));
 }

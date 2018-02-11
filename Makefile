@@ -8,7 +8,6 @@ SRCS	= ./free.c \
 	  ./malloc.c \
 	  ./realloc.c \
 	  ./pthread.c \
-	  ./show_alloc_mem.c \
 
 OBJS	= $(SRCS:.c=.o)
 

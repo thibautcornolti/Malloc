@@ -31,18 +31,10 @@ int print_address_in_hexa(unsigned long long int ptr)
 	if ((ptr / 16) != 0)
 		size = print_address_in_hexa(ptr / 16);
 	nbr2 = ptr % 16;
-	if (nbr2 >= 10 && nbr2 <= 15)
-		nbrc = (char)(nbr2 + 55);
-	else
-		nbrc = (char)(nbr2 + '0');
+	nbrc = (nbr2 >= 10 && nbr2 <= 15) ? (char)(nbr2 + 55) :
+		(char)(nbr2 + '0');
 	write(1, &nbrc, 1);
 	return (size + 1);
-}
-
-void my_putstr(char *str)
-{
-	for (int i = 0; str[i]; i++)
-		write(1, &str[i], 1);
 }
 
 void show_alloc_mem()
@@ -61,7 +53,7 @@ void show_alloc_mem()
 		print_address_in_hexa((size_t)tmp->ptr);
 		my_putstr(" - ");
 		write(1, "0x", 2);
-		print_address_in_hexa((size_t)(tmp->ptr + tmp->size));
+		print_address_in_hexa((size_t)((void *)tmp->ptr + tmp->size));
 		my_putstr(" : ");
 		my_putnbr((long long int)tmp->size);
 		if (!tmp->occupied)
